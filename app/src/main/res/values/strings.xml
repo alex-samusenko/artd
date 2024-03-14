@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Warehouse</string>
+
+    <!-- Actions -->
+    <string name="action_settings">Settings</string>
+
+    <!-- Server Preferences -->
+    <string name="server_title">Server</string>
+    <string name="rest_uri_title">Rest API Url</string>
+    <string name="server_summary_on">Use remote rest server</string>
+    <string name="server_summary_off">Use local database</string>
 </resources>
