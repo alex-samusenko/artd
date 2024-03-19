@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import ru.artd.warehouse.databinding.ActivityMainBinding
 import ru.artd.warehouse.ui.cells.CellsFragment
 import ru.artd.warehouse.ui.settings.SettingsFragment
@@ -37,21 +38,17 @@ class MainActivity : AppCompatActivity() {
                 SettingsFragment::class.java.name -> {
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     supportActionBar?.title = getString(R.string.action_settings)
-                    supportActionBar?.hide()
                 }
 
                 CellsFragment::class.java.name -> {
                     supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                    supportActionBar?.show()
+                    supportActionBar?.setDisplayUseLogoEnabled(true)
                 }
             }
         }
 
-        /*val textView: AutoCompleteTextView = findViewById(R.id.warehouse)
-        val countries: Array<out String> = resources.getStringArray(R.array.countries_array)
-        ArrayAdapter(this, android.R.layout.activity_list_item, countries).also { adapter ->
-            textView.setAdapter(adapter)
-        }*/
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        settings.useInternalCamera.value = preferences!!.getBoolean("camera", false)
 
         openFragment(CellsFragment.newInstance())
     }
@@ -89,7 +86,6 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == 11) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 Log.d("MyApp", "Access denied by user")
-                //startActivity(Intent(this, ScannerActivity::class.java))
             }
         }
     }

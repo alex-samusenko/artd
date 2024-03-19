@@ -16,9 +16,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Warehouse">
+        android:theme="@style/Theme.Warehouse"
+        tools:targetApi="31">
         <activity
-            android:name=".ScannerActivity"
+            android:name=".ui.scanner.ScannerActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

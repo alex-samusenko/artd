@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import ru.artd.warehouse.R
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -17,15 +16,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        @Suppress("DEPRECATION")
+        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         settings.currentFragment.value = this::class.java.name
-
         val camera = preferenceManager.findPreference<Preference>("camera")
-        val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)
-        settings.useInternalCamera.value = preferences.getBoolean("camera", false)
+
         camera?.let {preference ->
             preference.setOnPreferenceChangeListener { _, newValue ->
                 settings.useInternalCamera.value = newValue as Boolean
@@ -43,5 +42,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         @JvmStatic
         fun newInstance() = SettingsFragment()
     }
+
 
 }

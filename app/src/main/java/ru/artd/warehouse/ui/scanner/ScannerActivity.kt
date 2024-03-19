@@ -1,4 +1,4 @@
-package ru.artd.warehouse
+package ru.artd.warehouse.ui.scanner
 
 import android.os.Bundle
 import android.util.Log
@@ -14,12 +14,6 @@ class ScannerActivity : AppCompatActivity(), ZBarScannerView.ResultHandler {
         enableEdgeToEdge()
         scanner = ZBarScannerView(this)
         setContentView(scanner)
-
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }*/
     }
 
     override fun onPause() {
@@ -35,5 +29,8 @@ class ScannerActivity : AppCompatActivity(), ZBarScannerView.ResultHandler {
 
     override fun handleResult(result: Result?) {
         Log.d("MyApp", "Result: ${result?.contents}")
+        intent.putExtra("code", result?.contents)
+        setResult(RESULT_OK, intent)
+        finish()
     }
 }

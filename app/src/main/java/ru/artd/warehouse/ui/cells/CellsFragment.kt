@@ -1,8 +1,8 @@
 package ru.artd.warehouse.ui.cells
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +10,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
+import androidx.preference.PreferenceManager
 import ru.artd.warehouse.R
-import ru.artd.warehouse.ScannerActivity
+import ru.artd.warehouse.ui.scanner.ScannerActivity
 import ru.artd.warehouse.databinding.FragmentCellsBinding
 import ru.artd.warehouse.ui.settings.SettingsViewModel
 
@@ -43,18 +46,28 @@ class CellsFragment : Fragment() {
         ArrayAdapter(view.context, android.R.layout.simple_list_item_1, countries).also { adapter ->
             textView.setAdapter(adapter)
         }
-
-        binding.cell.setImeOptions(EditorInfo.IME_ACTION_DONE)
+        val preferences = activity?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+        if (preferences!!.getBoolean("camera", false))
+            binding.cell.setImeOptions(EditorInfo.IME_ACTION_GO)
+        else
+            binding.cell.setImeOptions(EditorInfo.IME_ACTION_SEARCH)
         settings.useInternalCamera.observe(activity as LifecycleOwner) {
             if (it) binding.cell.setImeOptions(EditorInfo.IME_ACTION_SEARCH)
-            else binding.cell.setImeOptions(EditorInfo.IME_ACTION_DONE)
+            else binding.cell.setImeOptions(EditorInfo.IME_ACTION_GO)
+        }
+
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                if (intent != null)
+                    binding.cell.setText(intent.getStringExtra("code"))
+            }
         }
 
         binding.cell.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
-                    Log.d("MyApp", "IME_ACTION_SEARCH")
-                    startActivity(Intent(view.context, ScannerActivity::class.java))
+                    startForResult.launch(Intent(view.context, ScannerActivity::class.java))
                     true
                 }
                 else -> {
