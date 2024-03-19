@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
-import androidx.preference.PreferenceManager
 import ru.artd.warehouse.R
 import ru.artd.warehouse.ScannerActivity
 import ru.artd.warehouse.databinding.FragmentCellsBinding
