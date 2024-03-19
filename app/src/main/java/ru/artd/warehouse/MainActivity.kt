@@ -1,18 +1,25 @@
 package ru.artd.warehouse
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import ru.artd.warehouse.databinding.ActivityMainBinding
 import ru.artd.warehouse.ui.cells.CellsFragment
 import ru.artd.warehouse.ui.settings.SettingsFragment
+import ru.artd.warehouse.ui.settings.SettingsViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val settings: SettingsViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,11 +32,25 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.place_holder, CellsFragment.newInstance())
-            .commit()
+        settings.currentFragment.observe(this) {
+            supportActionBar?.title = getString(R.string.app_name)
+            when (it) {
+                SettingsFragment::class.java.name -> {
+                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    supportActionBar?.title = getString(R.string.action_settings)
+                }
 
+                CellsFragment::class.java.name -> {
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    supportActionBar?.setDisplayUseLogoEnabled(true)
+                }
+            }
+        }
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        settings.useInternalCamera.value = preferences!!.getBoolean("camera", false)
+
+        openFragment(CellsFragment.newInstance())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -39,27 +60,34 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-                supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.place_holder, CellsFragment.newInstance())
-                    .commit()
-
-                supportActionBar?.title = getString(R.string.app_name)
-            }
-            R.id.action_settings -> {
-                supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-                supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.place_holder, SettingsFragment.newInstance())
-                    .commit()
-
-                supportActionBar?.title = getString(R.string.action_settings)
-            }
+            android.R.id.home ->
+                openFragment(CellsFragment.newInstance())
+            R.id.action_settings ->
+                openFragment(SettingsFragment.newInstance())
         }
         return true
     }
+
+    private fun openFragment(fragment: Fragment) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.place_holder, fragment)
+            .commit()
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 11) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Log.d("MyApp", "Access denied by user")
+            }
+        }
+    }
+
 }
