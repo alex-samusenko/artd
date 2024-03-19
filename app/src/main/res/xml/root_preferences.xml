@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--<PreferenceCategory app:title="@string/server_header">-->
 
@@ -12,7 +13,14 @@
             app:dependency="server"
             app:key="rest_uri"
             app:useSimpleSummaryProvider="true"
+            android:inputType="textUri"
             app:title="@string/rest_uri_title" />
+
+        <SwitchPreferenceCompat
+            app:key="camera"
+            app:summaryOff="@string/camera_summary_off"
+            app:summaryOn="@string/camera_summary_on"
+            app:title="@string/camera_title" />
 
     <!--</PreferenceCategory>-->
 

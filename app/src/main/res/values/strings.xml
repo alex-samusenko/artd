@@ -4,9 +4,16 @@
     <!-- Actions -->
     <string name="action_settings">Settings</string>
 
-    <!-- Server Preferences -->
+    <!-- Preferences -->
     <string name="server_title">Server</string>
     <string name="rest_uri_title">Rest API Url</string>
     <string name="server_summary_on">Use remote rest server</string>
     <string name="server_summary_off">Use local database</string>
+    <string name="camera_summary_on">Use internal camera</string>
+    <string name="camera_summary_off">Use external scanner</string>
+    <string name="camera_title">Scanner device</string>
+
+    <!-- Fields -->
+    <string name="cell">Cell</string>
+
 </resources>
